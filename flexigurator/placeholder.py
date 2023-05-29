@@ -15,16 +15,16 @@ class Placeholder:
     def __init__(self, model_type: Type[BaseModel]):
         self._model_type = model_type
         # Get the fields of the BaseModel
-        self._model_fields = model_type.__fields__  # type: ignore
+        self._model_fields = model_type.__fields__
 
     def __getattribute__(self, item: str) -> Any:
-        """Usual getting an attribute but raises `NotConfiguredError` on Model fields."""
+        # Get an attribute 'as usual' but raise a `NotConfiguredError` on Model fields.
         try:
             # Check if the requested attribute is part of the BaseModel fields
             fields = object.__getattribute__(self, "_model_fields")
             if item in fields:
-                # A BaseModel field is being requested, which is not possible as it is not
-                # configured, so we throw an exception
+                # A BaseModel field is being requested, but as this model is not configured we
+                # throw an exception
                 raise NotConfiguredError(self._model_type)
         except AttributeError:
             """We cannot check using other means than a try/catch due to recursion."""
@@ -37,4 +37,25 @@ class Placeholder:
 
 
 def placeholder(model_type: Type[BaseModel]) -> Any:
+    """Return a placeholder set as pydantic field value to make it optionally configurable.
+
+    Specifically this removes the need to use `None` to make fields optional, thereby making
+    configuration classes much easier to work with as convoluted `None` checking is no longer
+    needed.
+
+    class SomeSubModel(BaseModel):
+        some_int: int
+
+    class SomeModel(BaseModel):
+        sub_model: SomeSubModel = placeholder(SomeSubModel)
+
+    SomeModel().sub_model.some_int                                    # Raises NotConfiguredError
+    SomeModel(sub_model=SomeSubModel(some_int=5)).sub_model.some_int  # Returns 5
+
+    Args:
+        model_type (Type[BaseModel]): The type of BaseModel it makes configurable
+
+    Returns:
+        Any: A Placeholder object
+    """
     return Placeholder(model_type)

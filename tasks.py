@@ -44,10 +44,9 @@ def complexity(context):
     )
 
 
-@task
 def docstyle(context):
-    """Use Pydocstyle to check documentation style"""
-    context.run(f"pydocstyle {_PROJ_PATH}", pty=_PTY_AVAILABLE)
+    """Use darglint to check documentation style according to Google guidelines."""
+    context.run(f"darglint {_PROJ_PATH} -v 2", pty=_PTY_AVAILABLE)
 
 @task
 def test(context, is_local=False):
