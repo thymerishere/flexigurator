@@ -1,21 +1,17 @@
-from typing import Any, Type
+from dataclasses import dataclass
+from json import JSONEncoder
+from typing import Any, Callable, Optional, Type, Union
 
 from pydantic import BaseModel
-from pydantic.fields import ModelField
-
+from pydantic.fields import ModelField, Field
 
 class NotConfiguredError(Exception):
     """Raised when a requested configuration variable is not supplied in configuration source."""
 
 
-class Placeholder:
-    _model_type: Type[BaseModel]
-    _model_fields: dict[str, ModelField]
-
-    def __init__(self, model_type: Type[BaseModel]):
-        self._model_type = model_type
-        # Get the fields of the BaseModel
-        self._model_fields = model_type.__fields__
+class Placeholder(BaseModel):
+    model_type: Type[BaseModel]
+    model_fields: dict[str, ModelField] = Field(default_factory=dict)
 
     def __getattribute__(self, item: str) -> Any:
         # Get an attribute 'as usual' but raise a `NotConfiguredError` on Model fields.
@@ -25,7 +21,7 @@ class Placeholder:
             if item in fields:
                 # A BaseModel field is being requested, but as this model is not configured we
                 # throw an exception
-                raise NotConfiguredError(self._model_type)
+                raise NotConfiguredError(self.model_type)
         except AttributeError:
             """We cannot check using other means than a try/catch due to recursion."""
 
@@ -33,7 +29,16 @@ class Placeholder:
         return object.__getattribute__(self, item)
 
     def __repr__(self):
-        return f"NotConfigured({self._model_type})"
+        return f"NotConfigured({self.model_type})"
+
+    def __str__(self) -> str:
+        return "Empty"
+
+    def dict(self, *args, **kwargs) -> Any:
+        return {}
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 def placeholder(model_type: Type[BaseModel]) -> Any:
@@ -58,4 +63,4 @@ def placeholder(model_type: Type[BaseModel]) -> Any:
     Returns:
         Any: A Placeholder object
     """
-    return Placeholder(model_type)
+    return Placeholder(model_type=model_type)

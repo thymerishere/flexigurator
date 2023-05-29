@@ -85,7 +85,11 @@ def ConfigForm(
     @app.post("/config_json/{file_name}", response_model=None)
     async def _config_json(request: Request, file_name: str) -> dict[str, str]:
         json_str = await request.json()
-        yaml_str = yaml.dump(json_str)
+
+        if json_str == {}:
+            yaml_str = ""
+        else:
+            yaml_str = yaml.dump(json_str)
 
         yaml_file_name = file_name + ".yaml"
 
