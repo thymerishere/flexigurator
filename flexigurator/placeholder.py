@@ -1,6 +1,7 @@
 from typing import Any, Type
-from pydantic.fields import ModelField
+
 from pydantic import BaseModel
+from pydantic.fields import ModelField
 
 
 class NotConfiguredError(Exception):
@@ -8,7 +9,6 @@ class NotConfiguredError(Exception):
 
 
 class Placeholder:
-
     _model_type: Type[BaseModel]
     _model_fields: dict[str, ModelField]
 
@@ -21,7 +21,7 @@ class Placeholder:
         """Usual getting an attribute but raises `NotConfiguredError` on Model fields."""
         try:
             # Check if the requested attribute is part of the BaseModel fields
-            fields = object.__getattribute__(self, '_model_fields')
+            fields = object.__getattribute__(self, "_model_fields")
             if item in fields:
                 # A BaseModel field is being requested, which is not possible as it is not
                 # configured, so we throw an exception
@@ -33,4 +33,8 @@ class Placeholder:
         return object.__getattribute__(self, item)
 
     def __repr__(self):
-        return f'NotConfigured({self._model_type})'
+        return f"NotConfigured({self._model_type})"
+
+
+def placeholder(model_type: Type[BaseModel]) -> Any:
+    return Placeholder(model_type)
