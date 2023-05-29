@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "flexigurator"
+version = "0.1.0"
+description = "Python Configuration solution."
+authors = ["Thomas Bos <thymer.bos217@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
