@@ -49,7 +49,7 @@ def docstyle(context):
     """Use Pydocstyle to check documentation style"""
     context.run(f"pydocstyle {_PROJ_PATH}", pty=_PTY_AVAILABLE)
 
-
+@task
 def test(context, is_local=False):
     """Use Pytest to run all tests."""
     context.run(f"pytest --cov={_PROJ_PATH} {'--cov-report term --cov-report html' if is_local else ''} tests", pty=_PTY_AVAILABLE)
