@@ -1,9 +1,8 @@
-from dataclasses import dataclass
-from json import JSONEncoder
-from typing import Any, Callable, Optional, Type, Union
+from typing import Any, Type
 
 from pydantic import BaseModel
-from pydantic.fields import ModelField, Field
+from pydantic.fields import Field, ModelField
+
 
 class NotConfiguredError(Exception):
     """Raised when a requested configuration variable is not supplied in configuration source."""
@@ -17,7 +16,7 @@ class Placeholder(BaseModel):
         # Get an attribute 'as usual' but raise a `NotConfiguredError` on Model fields.
         try:
             # Check if the requested attribute is part of the BaseModel fields
-            fields = object.__getattribute__(self, "_model_fields")
+            fields = object.__getattribute__(self, "model_fields")
             if item in fields:
                 # A BaseModel field is being requested, but as this model is not configured we
                 # throw an exception
@@ -27,6 +26,10 @@ class Placeholder(BaseModel):
 
         # The requested attribute is not a BaseModel field, so we return the attribute normally
         return object.__getattribute__(self, item)
+
+    @classmethod
+    def create(cls, model_type: Type[BaseModel]) -> "Placeholder":
+        return Placeholder(model_type=model_type, model_fields=model_type.__fields__)
 
     def __repr__(self):
         return f"NotConfigured({self.model_type})"
@@ -63,4 +66,4 @@ def placeholder(model_type: Type[BaseModel]) -> Any:
     Returns:
         Any: A Placeholder object
     """
-    return Placeholder(model_type=model_type)
+    return Placeholder.create(model_type=model_type)

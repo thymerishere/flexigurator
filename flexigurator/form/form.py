@@ -1,14 +1,14 @@
-from dataclasses import dataclass
 import json
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Type
-from fastapi import FastAPI, Request, Response
-from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
 
 import mmh3
 import yaml
+from fastapi import FastAPI, Request, Response
+from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
 
 
 @dataclass
