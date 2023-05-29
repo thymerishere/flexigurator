@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Flexigurator Form</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+
+</head>
+
+<body>
+
+    <div style="font-size: 8px; text-align: center">
+        <pre>
+███████╗██╗     ███████╗██╗  ██╗██╗ ██████╗ ██╗   ██╗██████╗  █████╗ ████████╗ ██████╗ ██████╗
+ ██╔════╝██║     ██╔════╝╚██╗██╔╝██║██╔════╝ ██║   ██║██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+ █████╗  ██║     █████╗   ╚███╔╝ ██║██║  ███╗██║   ██║██████╔╝███████║   ██║   ██║   ██║██████╔╝
+ ██╔══╝  ██║     ██╔══╝   ██╔██╗ ██║██║   ██║██║   ██║██╔══██╗██╔══██║   ██║   ██║   ██║██╔══██╗
+ ██║     ███████╗███████╗██╔╝ ██╗██║╚██████╔╝╚██████╔╝██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
+ ╚═╝     ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+        </pre>
+    </div>
+
+    <div id="title-templates-select" style="margin-left: auto; margin-right: auto; width: 700px">
+        <h1 style="text-align: center;">Flexigurator Form</h1>
+
+        <label for="config_templates">Choose a Config Template:</label>
+        <select name="config_templates_select" id="config_templates_select" style="width: 100%"></select>
+        <button id='submit' style="width: 100%; margin-top: 10px">Select</button>
+    </div>
+
+    <script>
+        {% autoescape false %}
+        const template_dict = {{ template_names }};
+        {% endautoescape %}
+
+        var template_dict_arr = Object.entries(template_dict);
+        template_dict_arr.sort(function(a, b) {
+            return a[1] > b[1];
+        });
+
+        // Set up the template option list
+        var configTemplateInnerHtml = "";
+
+        for (const i in template_dict_arr) {
+            var uid = template_dict_arr[i][0]
+            var template_name = template_dict_arr[i][1];
+            var option = `<option value="${uid}">${template_name}</option>`;
+            configTemplateInnerHtml = configTemplateInnerHtml.concat(option);
+        }
+
+        document.getElementById("config_templates_select").innerHTML = configTemplateInnerHtml;
+
+        // Make the submit button open a page with the correct form
+        document.getElementById("submit").addEventListener('click', function () {
+            var e = document.getElementById("config_templates_select");
+            var uid = e.options[e.selectedIndex].value;
+            window.location.href = `/config_template/${uid}`;
+        })
+    </script>
+</body>
+
+</html>
