@@ -23,5 +23,4 @@ app = ConfigForm(
     Model,
     Path("./save"),
     Path("./templates"),
-    Path("flexigurator/form/jinja_templates"),
 )

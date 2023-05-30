@@ -1,3 +1,4 @@
+import importlib.resources as resources
 import json
 import os
 from dataclasses import dataclass
@@ -9,6 +10,11 @@ import yaml
 from fastapi import FastAPI, Request, Response
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+
+# Default location for Jinja templates is in the jinja_templates package
+# This slightly convoluted method is used to get the path from the context manager
+with resources.path("flexigurator.form", "jinja_templates") as _jinja_templates_file:
+    _JINJA_TEMPLATE_DEFAULT_PATH = _jinja_templates_file
 
 
 @dataclass
@@ -68,10 +74,12 @@ def ConfigForm(
     config: Type[BaseModel],
     config_save_path: Path,
     config_templates_path: Path,
-    jinja_templates_path: Path,
+    jinja_templates_path: Path | None = None,
 ) -> FastAPI:  # pragma: no cover
     app = FastAPI()
-    templates = Jinja2Templates(directory=jinja_templates_path)
+    templates_dir_path = jinja_templates_path or _JINJA_TEMPLATE_DEFAULT_PATH
+    print(templates_dir_path)
+    templates = Jinja2Templates(directory=templates_dir_path)
     config_templates = _load_config_templates(config_templates_path)
     schema = config.schema()
 
