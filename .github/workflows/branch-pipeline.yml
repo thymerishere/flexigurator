@@ -11,4 +11,5 @@ jobs:
           python-version: '3.11'
       - run: pip install invoke poetry
       - run: poetry install --with test
+      - run: poetry shell
       - run: invoke pipeline
