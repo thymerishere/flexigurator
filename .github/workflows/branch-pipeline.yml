@@ -9,7 +9,6 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - run: pip install invoke poetry
+      - run: pip install poetry
       - run: poetry install --with test
-      - run: source $(poetry env info --path)/bin/activate
-      - run: invoke pipeline
+      - run: poetry run invoke pipeline
