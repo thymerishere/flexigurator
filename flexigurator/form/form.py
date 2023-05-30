@@ -1,6 +1,7 @@
 import importlib.resources as resources
 import json
 import os
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Type
@@ -13,8 +14,10 @@ from pydantic import BaseModel
 
 # Default location for Jinja templates is in the jinja_templates package
 # This slightly convoluted method is used to get the path from the context manager
-with resources.path("flexigurator.form", "jinja_templates") as _jinja_templates_file:
-    _JINJA_TEMPLATE_DEFAULT_PATH = _jinja_templates_file
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    with resources.path("flexigurator.form", "jinja_templates") as _jinja_templates_file:
+        _JINJA_TEMPLATE_DEFAULT_PATH = _jinja_templates_file
 
 
 @dataclass
@@ -50,7 +53,15 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def _config_form_start_vals(uid: str, config_templates: list[ConfigTemplate]) -> str:
-    """Retrieves the start values for the template with the requested UID."""
+    """Retrieves the start values for the template with the requested UID.
+
+    Args:
+        uid (str): The UID of the requested template
+        config_templates (list[ConfigTemplate]): the list of templates
+
+    Returns:
+        str: a json string containing the start vals of the requested template
+    """
     path = [template for template in config_templates if template.uid == uid][0].path
     return json.dumps(_load_yaml(path))
 
@@ -61,7 +72,13 @@ def _write_to_file(file_path: Path, contents: str) -> None:
 
 
 def _save_config_form_output(json_: dict[str, Any], file_name: str, save_path: Path):
-    """Writes the given json to a `.yaml` file."""
+    """Writes the given json to a `.yaml` file.
+
+    Args:
+        json_ (dict[str, Any]): The json to be converted to yaml
+        file_name (str): The file name without `.yaml` extention
+        save_path (Path): The directory in which the file needs to be saved
+    """
     if json_ == {}:
         yaml_str = ""
     else:
@@ -90,7 +107,7 @@ def ConfigForm(
 
     @app.get("/", response_model=None)
     async def root(request: Request) -> Response:
-        """The landing page for the configurator."""
+        # The landing page for the configurator.
         template_dict = {template.uid: template.name for template in config_templates}
 
         return templates.TemplateResponse(
@@ -99,7 +116,7 @@ def ConfigForm(
 
     @app.get("/config_template/{uid}", response_model=None)
     async def config_form(request: Request, uid: str) -> Response:
-        """Returns the form for the requested template."""
+        # Returns the form for the requested template.
         return templates.TemplateResponse(
             "config_form.html",
             {
@@ -111,7 +128,7 @@ def ConfigForm(
 
     @app.post("/config_json/{file_name}", response_model=None)
     async def _config_json(request: Request, file_name: str) -> dict[str, str]:
-        """Writes the form results to disk."""
+        # Writes the form results to disk.
         json_ = await request.json()
         _save_config_form_output(json_, file_name, config_save_path)
         return {"message": f"Parsed config json {json_}!"}

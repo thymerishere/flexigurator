@@ -9,13 +9,6 @@ class NotConfiguredError(Exception):
 
 
 class Placeholder(BaseModel):
-    """A basemodel which mimics and acts as placeholder for another.
-
-    When a field of the BaseModel of type `model_type` is requested, a `NonConfiguredError` is
-    thrown. Setting this placeholder as the default value of a BaseModel field makes it optional,
-    while removing the need to list it as being optional and all the convoluted `None`-checking
-    coming with it.
-    """
     model_type: Type[BaseModel]
     model_fields: dict[str, ModelField] = Field(default_factory=dict)
 
@@ -44,7 +37,7 @@ class Placeholder(BaseModel):
         return f"NotConfigured({self.model_type})"
 
     def dict(self, *args, **kwargs) -> Any:
-        """Overrides the pydantic default `dict` to return nothing."""
+        # Overrides the pydantic default `dict` to return nothing.
         return {}
 
     class Config:
