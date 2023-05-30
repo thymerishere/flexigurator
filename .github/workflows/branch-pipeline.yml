@@ -1,0 +1,14 @@
+name: branch-pipeline
+run-name: Test ${{ github.ref_name }}
+on: [push]
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install poetry
+      - run: poetry install --with test
+      - run: poetry run invoke pipeline

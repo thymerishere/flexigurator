@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Flexigurator Form</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+
+    <script>
+    // Set the default CSS theme and icon library globally
+    JSONEditor.defaults.theme = 'spectre';
+    JSONEditor.defaults.iconlib = 'spectre';
+    </script>
+</head>
+
+<body style="margin-left: 1%; margin-top: 1%; margin-bottom: 1%; margin-right: 1%">
+
+    <div id="title-nav" style="margin-left: auto; margin-right: auto; width: 500px">
+        <h1 style="text-align: center;">Flexigurator Form</h1>
+        <button id="templates" style="width: 100%;">Templates</button>
+    </div>
+
+
+    <div id='editor_holder' style="white-space: pre-wrap"></div>
+
+    <div id="submit-holder" style="margin-left: auto; margin-right: auto; width: 50%">
+        <form id="file_name_form" style="width: 100%; margin-bottom: 10px">
+            <label style="width: 100%" for="file_name">File name (.yaml is added):</label><br>
+            <input style="width: 100%" type="text" id="file_name" name="file_name" required pattern="[A-Za-z0-9_]+"><br>
+        </form>
+
+        <button id="submit" style="width: 100%">Submit</button>
+    </div>
+
+
+
+    <script>
+        {% autoescape false %}
+        const schema = {{ schema_json }};
+        const start_val = {{ start_val }};
+        {% endautoescape %}
+
+        // JSON Editor configuration. I keep them listed in case we need them in the future
+        options = {
+            "show_errors": "always",
+            "required_by_default": false,
+            "display_required_only": false,
+            "show_opt_in": false,
+            "no_additional_properties": false,
+            "ajax": false,
+            "disable_edit_json": true,
+            "disable_collapse": false,
+            "disable_properties": false,
+            "disable_array_add": false,
+            "disable_array_reorder": false,
+            "disable_array_delete": false,
+            "enable_array_copy": false,
+            "array_controls_top": false,
+            "disable_array_delete_all_rows": false,
+            "disable_array_delete_last_row": false,
+            "schema": schema,
+            "startval": start_val,
+            "use_default_values": true,  // Ensures default values from Config or start_val are used
+            "keep_oneof_values": true,
+            "use_name_attributes": false,
+        }
+
+        // Initialize the editor with a JSON schema
+        var editor = new JSONEditor(document.getElementById('editor_holder'), options);
+
+        // Make the "Templates" button redirect to the index
+        document.getElementById('templates').addEventListener('click', function () {
+            window.location.href = "/";
+        })
+
+        // Create a listener for the submit button which sends the form contents to the API
+        document.getElementById('submit').addEventListener('click', function () {
+            var file_name_element = document.getElementById("file_name");
+
+            if (!file_name_element.checkValidity()) {
+                alert("Please enter a file name!");
+                return;
+            }
+
+            var file_name = file_name_element.value;
+
+            // Get the value from the editor
+            errors = editor.validate();
+
+            if (errors.length == 0) {
+                var value = editor.getValue();
+                var body = JSON.stringify(value);
+
+                fetch(`/config_json/${file_name}`, {
+                    method: 'POST',
+                    dataType: "json",
+                    contentType : "application/json",
+                    body: body
+                })
+
+                alert("Config generated!");
+            } else {
+                alert(`Not all errors have been resolved! ${errors.length} remaining!`);
+                console.log(errors);
+            }
+        });
+
+        const fillInValueError = 'Fill in this value'
+
+        // Custom validators must return an array of errors or an empty array if valid
+        JSONEditor.defaults.custom_validators.push((schema, value, path) => {
+            const errors = [];
+
+            if (!editor.ready) return errors;
+
+            if (schema.type === "string") {
+                if (schema.format === "path" && value === "/path/to/file") {
+                    errors.push({
+                        path: path,
+                        property: 'format',
+                        message: fillInValueError,
+                    });
+                }
+
+                if (schema.format === "ipv4" && value === "0.0.0.0") {
+                    errors.push({
+                        path: path,
+                        property: 'format',
+                        message: fillInValueError
+                    });
+                }
+
+                if (value === "...") {
+                    errors.push({
+                        path: path,
+                        property: 'type',
+                        message: fillInValueError
+                    });
+                }
+            }
+
+            if (schema.type === "integer" || schema.type === "number") {
+                if (value === 999999999) {
+                    errors.push({
+                        path: path,
+                        property: 'type',
+                        message: fillInValueError
+                    });
+                }
+            }
+
+            return errors;
+        });
+
+        editor.on('ready', () => {
+
+        });
+
+
+
+    </script>
+</body>
+
+</html>
