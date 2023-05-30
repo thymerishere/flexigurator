@@ -9,6 +9,13 @@ class NotConfiguredError(Exception):
 
 
 class Placeholder(BaseModel):
+    """A basemodel which mimics and acts as placeholder for another.
+
+    When a field of the BaseModel of type `model_type` is requested, a `NonConfiguredError` is
+    thrown. Setting this placeholder as the default value of a BaseModel field makes it optional,
+    while removing the need to list it as being optional and all the convoluted `None`-checking
+    coming with it.
+    """
     model_type: Type[BaseModel]
     model_fields: dict[str, ModelField] = Field(default_factory=dict)
 
@@ -17,10 +24,12 @@ class Placeholder(BaseModel):
         try:
             # Check if the requested attribute is part of the BaseModel fields
             fields = object.__getattribute__(self, "model_fields")
+
             if item in fields:
                 # A BaseModel field is being requested, but as this model is not configured we
                 # throw an exception
                 raise NotConfiguredError(self.model_type)
+
         except AttributeError:
             """We cannot check using other means than a try/catch due to recursion."""
 
@@ -35,6 +44,7 @@ class Placeholder(BaseModel):
         return f"NotConfigured({self.model_type})"
 
     def dict(self, *args, **kwargs) -> Any:
+        """Overrides the pydantic default `dict` to return nothing."""
         return {}
 
     class Config:

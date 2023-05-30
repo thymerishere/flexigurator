@@ -50,6 +50,7 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def _config_form_start_vals(uid: str, config_templates: list[ConfigTemplate]) -> str:
+    """Retrieves the start values for the template with the requested UID."""
     path = [template for template in config_templates if template.uid == uid][0].path
     return json.dumps(_load_yaml(path))
 
@@ -60,6 +61,7 @@ def _write_to_file(file_path: Path, contents: str) -> None:
 
 
 def _save_config_form_output(json_: dict[str, Any], file_name: str, save_path: Path):
+    """Writes the given json to a `.yaml` file."""
     if json_ == {}:
         yaml_str = ""
     else:
@@ -77,14 +79,18 @@ def ConfigForm(
     jinja_templates_path: Path | None = None,
 ) -> FastAPI:  # pragma: no cover
     app = FastAPI()
+
+    # Setup Jinja templates folder
     templates_dir_path = jinja_templates_path or _JINJA_TEMPLATE_DEFAULT_PATH
-    print(templates_dir_path)
     templates = Jinja2Templates(directory=templates_dir_path)
+
+    # Setup config templates and config json schema
     config_templates = _load_config_templates(config_templates_path)
-    schema = config.schema()
+    schema = config.schema_json()
 
     @app.get("/", response_model=None)
     async def root(request: Request) -> Response:
+        """The landing page for the configurator."""
         template_dict = {template.uid: template.name for template in config_templates}
 
         return templates.TemplateResponse(
@@ -93,6 +99,7 @@ def ConfigForm(
 
     @app.get("/config_template/{uid}", response_model=None)
     async def config_form(request: Request, uid: str) -> Response:
+        """Returns the form for the requested template."""
         return templates.TemplateResponse(
             "config_form.html",
             {
@@ -104,6 +111,7 @@ def ConfigForm(
 
     @app.post("/config_json/{file_name}", response_model=None)
     async def _config_json(request: Request, file_name: str) -> dict[str, str]:
+        """Writes the form results to disk."""
         json_ = await request.json()
         _save_config_form_output(json_, file_name, config_save_path)
         return {"message": f"Parsed config json {json_}!"}
