@@ -69,7 +69,7 @@ def ConfigForm(
     config_save_path: Path,
     config_templates_path: Path,
     jinja_templates_path: Path,
-) -> FastAPI:
+) -> FastAPI:  # pragma: no cover
     app = FastAPI()
     templates = Jinja2Templates(directory=jinja_templates_path)
     config_templates = _load_config_templates(config_templates_path)

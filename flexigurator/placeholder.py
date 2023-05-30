@@ -34,9 +34,6 @@ class Placeholder(BaseModel):
     def __repr__(self):
         return f"NotConfigured({self.model_type})"
 
-    def __str__(self) -> str:
-        return "Empty"
-
     def dict(self, *args, **kwargs) -> Any:
         return {}
 

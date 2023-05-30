@@ -28,3 +28,8 @@ def test_placeholder_succeed_when_configured():
 def test_placeholder_repr():
     actual = repr(TestModel().sub_model)
     assert "NotConfigured" in actual and "TestSubModel" in actual
+
+
+def test_placeholder_dict():
+    actual = TestModel().sub_model.dict()
+    assert actual == {}
