@@ -14,6 +14,7 @@ jinja2 = "^3.1.2"
 mmh3 = "^4.0.0"
 pyyaml = "^6.0"
 invoke = "^2.1.2"
+confz = "^1.8.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.3.1"
