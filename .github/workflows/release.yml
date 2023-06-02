@@ -1,0 +1,24 @@
+name: release
+run-name: Release ${{ github.event.release.tag_name }}
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish:
+    name: Publishing ${{ github.event.release.tag_name }}
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'created'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install poetry
+      - run: poetry install
+      - shell: bash
+        env:
+          PYPI_TOKEN: ${{ secrets.PyPiToken }}
+        run: |
+          poetry config pypi-token.pypi "$PYPI_TOKEN"
+      - run: poetry publish --build
