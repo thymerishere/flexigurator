@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import Any, Generator, Iterator, Type
+from typing import Any, Iterator, Type
 
 from confz import ConfZ, ConfZDataSource, ConfZSource
 
