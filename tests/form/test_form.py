@@ -40,12 +40,12 @@ def test_load_config_templates(mocker: MockerFixture):
             ConfigTemplate("2", "config_two", folder_path.joinpath(Path("config_two.yaml"))),
             # Glob returns in alphabetical order
             ConfigTemplate(
-                "4",
+                "3",
                 "nested/also_nested/config_four",
                 folder_path.joinpath(Path("nested/also_nested/config_four.yaml")),
             ),
             ConfigTemplate(
-                "3", "nested/config_three", folder_path.joinpath(Path("nested/config_three.yaml"))
+                "4", "nested/config_three", folder_path.joinpath(Path("nested/config_three.yaml"))
             ),
         ]
 
