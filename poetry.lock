@@ -188,6 +188,23 @@ files = [
 ]
 
 [[package]]
+name = "confz"
+version = "1.8.1"
+description = "ConfZ is a configuration management library for Python based on pydantic."
+optional = false
+python-versions = ">=3.7.2,<4.0.0"
+files = [
+    {file = "confz-1.8.1-py3-none-any.whl", hash = "sha256:64c39218366902a7053c9f10baf368f34576e61121f465286c04d14327cde685"},
+    {file = "confz-1.8.1.tar.gz", hash = "sha256:61a8465930e91a2324dc505aedf4b5658e2a5516042df183ae2b15f3e90ab751"},
+]
+
+[package.dependencies]
+pydantic = ">=1.9.0,<2.0.0"
+python-dotenv = ">=0.19.2,<0.22.0"
+PyYAML = ">=5.4.1,<7.0.0"
+toml = ">=0.10.2,<0.11.0"
+
+[[package]]
 name = "coverage"
 version = "7.2.6"
 description = "Code coverage measurement for Python"
@@ -755,6 +772,20 @@ pytest = ">=5.0"
 dev = ["pre-commit", "pytest-asyncio", "tox"]
 
 [[package]]
+name = "python-dotenv"
+version = "0.21.1"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "python-dotenv-0.21.1.tar.gz", hash = "sha256:1c93de8f636cde3ce377292818d0e440b6e45a82f215c3744979151fa8151c49"},
+    {file = "python_dotenv-0.21.1-py3-none-any.whl", hash = "sha256:41e12e0318bebc859fcc4d97d4db8d20ad21721a6aa5047dd59f090391cb549a"},
+]
+
+[package.extras]
+cli = ["click (>=5.0)"]
+
+[[package]]
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
@@ -891,6 +922,17 @@ anyio = ">=3.4.0,<5"
 full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart", "pyyaml"]
 
 [[package]]
+name = "toml"
+version = "0.10.2"
+description = "Python Library for Tom's Obvious, Minimal Language"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+files = [
+    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
+    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
+]
+
+[[package]]
 name = "types-pyyaml"
 version = "6.0.12.10"
 description = "Typing stubs for PyYAML"
@@ -947,4 +989,4 @@ requests = ">=2.0,<3.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "050b2dab102cb53d08038de2b6eba84f76cfbc4a2ea15ccb40dec5092fab4c6f"
+content-hash = "b0eab5182a7f8e754e8608d0a2f59ffb330197d29c6a5fc8e4abd2dfcf01618d"
