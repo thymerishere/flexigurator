@@ -37,7 +37,8 @@ class ConfigTemplate:
 
 
 def _load_config_templates(path: Path) -> list[ConfigTemplate]:
-    templates = [ConfigTemplate.from_path(file_path, path) for file_path in path.glob("**/*.yaml")]
+    paths = sorted(path.glob("**/*.yaml"), key=str)
+    templates = [ConfigTemplate.from_path(file_path, path) for file_path in paths]
     templates = sorted(templates, key=lambda template: template.name)
 
     return templates
