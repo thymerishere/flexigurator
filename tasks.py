@@ -9,14 +9,14 @@ _PTY_AVAILABLE = not WINDOWS
 
 @task
 def apply_formatting(context):
-    """Apply black."""
+    """Apply black and isort to format the code according to PEP guidelines."""
     context.run(f"isort --profile black {_PROJ_PATH}", pty=_PTY_AVAILABLE)
     context.run(f"black {_PROJ_PATH} --line-length=100", pty=_PTY_AVAILABLE)
 
 
 @task
 def formatting(context):
-    """Run black but only show the diff."""
+    """Run black and isort, but only show the diff."""
     context.run(f"isort --check --profile black {_PROJ_PATH}", pty=_PTY_AVAILABLE)
     context.run(
         f"black {_PROJ_PATH} --line-length=100 --diff --color", pty=_PTY_AVAILABLE
@@ -46,6 +46,7 @@ def complexity(context):
 
 @task
 def codestyle(context):
+    """Run pylint to check code style and linting errors."""
     context.run(f"pylint {_PROJ_PATH}", pty=_PTY_AVAILABLE)
 
 
