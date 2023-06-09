@@ -30,12 +30,15 @@ def patch_config(
     if not isinstance(data, list):
         data = [data]
 
-    patched_sources = config_class.CONFIG_SOURCES
+    original_sources = config_class.CONFIG_SOURCES
+    patched_sources: list[ConfZSource]
 
-    if patched_sources is None:
+    if original_sources is None:
         patched_sources = []
-    elif not isinstance(patched_sources, list):
-        patched_sources = [patched_sources]
+    elif not isinstance(original_sources, list):
+        patched_sources = [original_sources]
+    else:
+        patched_sources = list(original_sources)
 
     patched_sources += data
 
