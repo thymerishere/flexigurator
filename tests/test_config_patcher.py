@@ -9,6 +9,13 @@ class TestSubModel(BaseModel):
     some_string: str
 
 
+class TestOptionalConfig(ConfZ):  # type: ignore
+    __test__ = False
+    sub_model: TestSubModel | None
+
+    CONFIG_SOURCES = [ConfZDataSource(dict(sub_model=dict(some_string="string")))]
+
+
 class TestConfig1(ConfZ):  # type: ignore
     __test__ = False
     sub_model: TestSubModel
@@ -54,6 +61,17 @@ def test_context():
         assert TestConfig2().some_int == 2
 
     assert TestConfig2().some_int == 1
+
+
+def test_context_sequential():
+    with patch_config(TestOptionalConfig, dict(sub_model=dict(some_string="test"))):
+        assert TestOptionalConfig().sub_model.some_string == "test"
+    with patch_config(TestOptionalConfig, dict(sub_model=dict(some_string="test2"))):
+        assert TestOptionalConfig().sub_model.some_string == "test2"
+    with patch_config(TestOptionalConfig, dict(sub_model=None)):
+        assert TestOptionalConfig().sub_model is None
+    with patch_config(TestOptionalConfig, dict(sub_model=dict(some_string="test3"))):
+        assert TestOptionalConfig().sub_model.some_string == "test3"
 
 
 def test_config_without_sources():
