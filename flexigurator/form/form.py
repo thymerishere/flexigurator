@@ -1,8 +1,8 @@
-import importlib.resources as resources
 import json
 import os
 import warnings
 from dataclasses import dataclass
+from importlib import resources
 from pathlib import Path
 from typing import Any, Type
 
@@ -45,7 +45,7 @@ def _load_config_templates(path: Path) -> list[ConfigTemplate]:
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
-    with open(path, "r") as yaml_file:
+    with open(path, "r", encoding="utf-8") as yaml_file:
         yaml_file_contents = yaml_file.read()
 
     yaml_object = yaml.safe_load(yaml_file_contents)
@@ -68,7 +68,7 @@ def _config_form_start_vals(uid: str, config_templates: list[ConfigTemplate]) ->
 
 
 def _write_to_file(file_path: Path, contents: str) -> None:
-    with open(file_path, "w") as file:
+    with open(file_path, "w", encoding="utf-8") as file:
         file.write(contents)
 
 

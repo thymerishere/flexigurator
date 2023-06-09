@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flexigurator"
-version = "0.3.2"
+version = "0.3.3"
 description = "Python Configuration solution."
 authors = ["Thomas Bos <thymer.bos217@gmail.com>"]
 readme = "README.md"
@@ -15,6 +15,8 @@ mmh3 = "^4.0.0"
 pyyaml = "^6.0"
 invoke = "^2.1.2"
 confz = "^1.8.1"
+cffi = "^1.15.1"
+pylint = "^2.17.4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.3.1"
@@ -51,6 +53,10 @@ ignore_missing_imports = false
 exclude = "test_*.py"
 cc_min = "B"
 no_assert = true
+
+[tool.pylint]
+extension-pkg-whitelist = "pydantic,mmh3"
+disable="C, R0903"
 
 
 [tool.pydocstyle]

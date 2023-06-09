@@ -24,7 +24,8 @@ class Placeholder(BaseModel):
                 raise NotConfiguredError(self.model_type)
 
         except AttributeError:
-            """We cannot check using other means than a try/catch due to recursion."""
+            # We cannot check using other means than a try/catch due to recursion.
+            pass
 
         # The requested attribute is not a BaseModel field, so we return the attribute normally
         return object.__getattribute__(self, item)
@@ -36,7 +37,7 @@ class Placeholder(BaseModel):
     def __repr__(self):
         return f"NotConfigured({self.model_type})"
 
-    def dict(self, *args, **kwargs) -> Any:
+    def dict(self, *args, **kwargs) -> Any:  # pylint: disable=W0613
         # Overrides the pydantic default `dict` to return nothing.
         return {}
 
