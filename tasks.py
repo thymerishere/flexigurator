@@ -44,9 +44,16 @@ def complexity(context):
     )
 
 
+@task
+def codestyle(context):
+    context.run(f"pylint {_PROJ_PATH}", pty=_PTY_AVAILABLE)
+
+
+@task
 def docstyle(context):
     """Use darglint to check documentation style according to Google guidelines."""
     context.run(f"darglint {_PROJ_PATH} -v 2", pty=_PTY_AVAILABLE)
+
 
 @task
 def test(context, is_local=False):
@@ -70,5 +77,6 @@ def pipeline(context, is_local=False):
     types(context)
     complexity(context)
     formatting(context)
+    codestyle(context)
     docstyle(context)
     test(context, is_local)
