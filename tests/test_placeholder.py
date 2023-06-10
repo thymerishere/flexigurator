@@ -14,7 +14,6 @@ class TestModel(BaseModel):
     sub_model: TestSubModel = placeholder(TestSubModel)
 
 
-
 def test_placeholder_crash_on_request_parameter():
     with pytest.raises(NotConfiguredError):
         TestModel().sub_model.some_string
