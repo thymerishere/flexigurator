@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flexigurator"
-version = "0.3.3"
+version = "0.4.0"
 description = "Python Configuration solution."
 authors = ["Thomas Bos <thymer.bos217@gmail.com>"]
 readme = "README.md"
