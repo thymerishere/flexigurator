@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from functools import reduce
 from pathlib import Path
-from typing import Any, Mapping, Type, TypeVar, get_args
+from typing import Any, Mapping, Type, TypeVar
 
 from confz import ConfZ, ConfZDataSource, ConfZFileSource, ConfZSource
 
@@ -29,13 +29,10 @@ def _flatten(a: T | list[T], b: T | list[T]) -> list[T]:
 
 
 def is_config_source(source: Any):
-    if source is None:
-        return False
-
     return (
         isinstance(source, ConfZSource)
-        or (isinstance(source, dict) and get_args(type(source))[0] == str)
-        or (isinstance(source, list) and get_args(type(source)) == (ConfZSource,))
+        or (isinstance(source, dict) and all(isinstance(key, str) for key in source))
+        or (isinstance(source, list) and all(isinstance(item, ConfZSource) for item in source))
     )
 
 
@@ -124,6 +121,12 @@ class ConfigVersions(_VersionCollection):
         Args:
             version_name (str): The name of the configuration version
             config_class (Type[ConfZ]): The configuration class to patch
+
+        Yields:
+            ...
+
+        Raises:
+            AttributeError: When no config class is given or the version does not exist
         """
         config_class = config_class or getattr(self, "CONFIG_CLASS", None)
 
