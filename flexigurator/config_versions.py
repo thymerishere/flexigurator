@@ -2,14 +2,30 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
+from functools import reduce
 from pathlib import Path
-from typing import Any, Mapping, Type, get_args
+from typing import Any, Mapping, Type, TypeVar, get_args
 
 from confz import ConfZ, ConfZDataSource, ConfZFileSource, ConfZSource
 
 from flexigurator import patch_config
 
 ConfigSource = ConfZSource | list[ConfZSource]
+
+
+T = TypeVar("T")
+
+
+def _flatten(a: T | list[T], b: T | list[T]) -> list[T]:
+    joined = [a] + [b]
+
+    def expand(agg: list[T], item: T | list[T]) -> list[T]:
+        if isinstance(item, list):
+            return agg + item
+        return agg + [item]
+
+    result = reduce(expand, joined, [])  # type: ignore
+    return result  # type: ignore
 
 
 def is_config_source(source: Any):
@@ -77,7 +93,7 @@ class DirectorySource(_VersionCollection):
     def _load_versions(path: Path) -> Mapping[str, ConfZFileSource | DirectorySource]:
         versions = dict[str, ConfZFileSource | DirectorySource]()
         for sub_path in path.glob("*"):
-            if path.suffix == ".yaml":
+            if sub_path.suffix == ".yaml":
                 name = sub_path.stem
                 versions[name] = ConfZFileSource(sub_path)
             if sub_path.is_dir():
@@ -98,26 +114,29 @@ class ConfigVersions(_VersionCollection):
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self):
-        # Set the default configuration version
-        if (default := getattr(self, "default", None)) is not None and (
-            config_class := getattr(self, "CONFIG_CLASS", None)
-        ) is not None:
-            if not is_config_source(default):
-                raise AttributeError("Not a version source: default")
-            config_class.CONFIG_SOURCES = default
-
     def _load_sources(self) -> None:
         pass
 
     @contextmanager
     def version(self, version_name: str, config_class: Type[ConfZ] | None = None):
+        """Select a version from the collection and patch the supplied config class.
+
+        Args:
+            version_name (str): The name of the configuration version
+            config_class (Type[ConfZ]): The configuration class to patch
+        """
         config_class = config_class or getattr(self, "CONFIG_CLASS", None)
 
         if not config_class:
-            raise AttributeError('Need to supply "config_class" as parameter or in ConfigVersions!')
+            raise AttributeError(
+                'Need to supply "config_class" as parameter or "CONFIG_CLASS" in ConfigVersions!'
+            )
 
         version_sources = self.get(version_name)
+
+        if hasattr(self, "BASE"):
+            version_base = self.get("BASE")
+            version_sources = _flatten(version_base, version_sources)
 
         with patch_config(config_class, version_sources):
             yield
