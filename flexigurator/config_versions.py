@@ -8,7 +8,7 @@ from typing import Any, Mapping, Type, TypeVar
 
 from confz import ConfZ, ConfZDataSource, ConfZFileSource, ConfZSource
 
-from flexigurator import patch_config
+from flexigurator.config_patch import patch_config
 
 ConfigSource = ConfZSource | list[ConfZSource]
 
@@ -109,6 +109,20 @@ class ConfigVersions(_VersionCollection):
     One should implement this class in a config versions class (e.g. `Configs`). Fields pointing to
     `ConfZSource`s, `DirectorySource`s, or dictionaries can then be added to load configuration
     versions. These versions can then be loaded using `Configs.version` as a context manager.
+
+    Example:
+        class Config(ConfZ):  # type: ignore
+            a: int
+            b: int
+
+        class Configs(ConfigVersions):
+            CONFIG_CLASS = Config
+            BASE = dict(a=1, b=2)  # Optional base version which is loaded before other versions
+            test = ConfZFileSource("configs/test.yaml")
+
+        with Configs().version("test"):
+            print(Config())  # Configuration from the ConfZFileSource is now loaded
+
     """
 
     _instance = None
