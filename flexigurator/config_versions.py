@@ -104,6 +104,13 @@ class DirectorySource(_VersionCollection):
 
 
 class ConfigVersions(_VersionCollection):
+    """Hold various versions of configurations that can be loaded in a context manager.
+
+    One should implement this class in a config versions class (e.g. `Configs`). Fields pointing to
+    `ConfZSource`s, `DirectorySource`s, or dictionaries can then be added to load configuration
+    versions. These versions can then be loaded using `Configs.version` as a context manager.
+    """
+
     _instance = None
 
     def __new__(cls):
@@ -119,7 +126,7 @@ class ConfigVersions(_VersionCollection):
         """Select a version from the collection and patch the supplied config class.
 
         Args:
-            version_name (str): The name of the configuration version
+            version_name (str): The name of the configuration version (i.e. the field name)
             config_class (Type[ConfZ]): The configuration class to patch
 
         Yields:
