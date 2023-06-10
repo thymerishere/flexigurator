@@ -45,6 +45,31 @@ Config().some_int     # 42
 
 Importantly, the new data does not need to be complete.
 
+### `ConfigVersions`
+Allows for easy storing and on-demand loading of configuration versions.
+
+```python
+from pathlib import Path
+from confz import ConfZFileSource
+from flexigurator import ConfigVersions, DirectorySource
+
+class Config(ConfZ):  # type: ignore
+    a: int
+    b: int
+
+class Configs(ConfigVersions):
+    CONFIG_CLASS = Config
+    BASE = dict(a=1, b=2)  # Optional base version which is loaded before other versions
+    test = ConfZFileSource("configs/test.yaml")
+    folder = DirectorySource(Path("configs/versions"))
+
+with Configs().version("test"):
+    print(Config())  # Configuration from the ConfZFileSource is now loaded
+
+with Configs().version("folder.version_1"):
+    print(Config())  # Configuration from "configs/versions/version_1.yaml" is loaded
+```
+
 
 ### `placeholder`
 When having nested, optional `BaseModel`s in your `Config`,
