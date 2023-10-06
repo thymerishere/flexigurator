@@ -10,5 +10,5 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install poetry
-      - run: poetry install --with test
+      - run: poetry install --with test --with form
       - run: poetry run invoke pipeline
