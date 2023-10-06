@@ -10,7 +10,7 @@ class NotConfiguredError(Exception):
 
 class Placeholder(BaseModel):
     model_type: Type[BaseModel]
-    model_fields: dict[str, ModelField] = Field(default_factory=dict)
+    model_fields: dict[str, ModelField] = Field(default_factory=dict)  # pylint: disable=E0601
 
     def __getattribute__(self, item: str) -> Any:
         # Get an attribute 'as usual' but raise a `NotConfiguredError` on Model fields.
