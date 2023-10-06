@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flexigurator"
-version = "0.5.1"
+version = "0.5.2"
 description = "Python Configuration solution."
 authors = ["Thomas Bos <thymer.bos217@gmail.com>"]
 readme = "README.md"
@@ -10,7 +10,6 @@ python = "^3.11"
 pydantic = "^1.10.8"
 pyyaml = "^6.0"
 confz = "^1.8.1"
-pylint = "^2.17.4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.3.1"
@@ -25,6 +24,7 @@ darglint = "^1.8.1"
 types-pyyaml = "^6.0.12.10"
 pytest-mock = "^3.10.0"
 invoke = "^2.2.0"
+pylint = "^3.0.1"
 
 
 [tool.poetry.group.form.dependencies]
