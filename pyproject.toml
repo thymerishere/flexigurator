@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flexigurator"
-version = "0.5.2"
+version = "0.5.3"
 description = "Python Configuration solution."
 authors = ["Thomas Bos <thymer.bos217@gmail.com>"]
 readme = "README.md"
@@ -10,6 +10,12 @@ python = "^3.11"
 pydantic = "^1.10.8"
 pyyaml = "^6.0"
 confz = "^1.8.1"
+mmh3 = {version = "^4.0.1", optional = true}
+jinja2 = {version = "^3.1.2", optional = true}
+fastapi = {version = "^0.103.2", optional = true}
+
+[tool.poetry.extras]
+form = ["mmh3", "jinja2", "fastapi"]
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.3.1"
@@ -26,11 +32,6 @@ pytest-mock = "^3.10.0"
 invoke = "^2.2.0"
 pylint = "^3.0.1"
 
-
-[tool.poetry.group.form.dependencies]
-mmh3 = "^4.0.1"
-fastapi = "^0.103.2"
-jinja2 = "^3.1.2"
 
 [build-system]
 requires = ["poetry-core"]
